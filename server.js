@@ -67,6 +67,9 @@ io.on('connection',function(socket){
     socket.on('pushData',function(data){
         io.to(roomid).emit('dataSync',data);
     });
+    socket.on('do',function(data){
+        io.to(roomid).emit('do',data);
+    })
 
 });
 

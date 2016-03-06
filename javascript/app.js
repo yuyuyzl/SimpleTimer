@@ -4,19 +4,24 @@
 (function() {
     var app = angular.module('main', []);
     app.controller('mainCtrl',['$scope','$q','$timeout', function($scope,$q,$timeout){
+        var a=this;
         this.encodeData=function(){
-            var data=this.stages[0][0]+'|'+this.stages[0][1]
-            for (var i=1;i<this.stages.length;i++)data+='|'+this.stages[i][0]+'|'+this.stages[i][1]
-            return window.btoa(unescape(encodeURIComponent(data)))
+            var data={
+                'stages':this.stages,
+                'stage':this.stage,
+                'sround':this.sround,
+                'time':this.time,
+                'groups':this.groups
+            }
+            return window.btoa(unescape(encodeURIComponent(JSON.stringify(data))));
         }
         this.decodeData=function(b64string){
-            var data=decodeURIComponent(escape(window.atob(b64string))).split('|');
-            this.stages=[]
-
-            while (data.length>=2){
-                this.stages.push([data.shift(),data.shift()]);
-
-            }
+            var data=JSON.parse(decodeURIComponent(escape(window.atob(b64string))));
+            this.stages=data['stages'];
+            this.groups=data['groups'];
+            this.setsround(data['sround']);
+            this.setStage(data['stage']);
+            this.time=data['time'];
         }
         this.hidemouse=false;
         this.onMoveTimer=null;
@@ -24,7 +29,8 @@
         this.socket=io();
         this.id=null;
         this.roomid=null;
-        var a=this;
+
+        this.ignoreNextDo=false;
         this.socket.on("id",function(id){
             a.id=id;
             console.log("get id=",id);
@@ -33,6 +39,30 @@
             console.log("data get: "+data);
             $timeout(function(){a.decodeData(data)},0);
         })
+        this.socket.on('do',function(data){
+            if (!a.ignoreNextDo){
+                switch (data){
+                    case 'P':
+                        $timeout(a.playButton,0);
+                        break;
+                    case 'A':
+                        $timeout(a.autoNext,0);
+                        break;
+                    case '+':
+                        $timeout(function(){
+                            a.time=a.inc(a.time);
+                        },0);
+                        break;
+                }
+            }else {
+                a.ignoreNextDo=false;
+
+            }
+        })
+        this.sendDo=function(data){
+            this.ignoreNextDo=true;
+            this.socket.emit('do',data);
+        }
         this.joinRoom=function(){
             if (this.roomid!=null){
                 this.socket.emit("joinRoom",this.roomid);
@@ -126,15 +156,15 @@
 
         };
         this.autoNext=function(){
-            if (this.time==0)this.setStage(this.stage+1);
-            else this.playButton();
+            if (a.time==0) a.setStage(a.stage+1);
+            else a.playButton();
         }
 
         this.playButton=function(){
-            if (this.timing)
-                this.stopTiming(false);
+            if (a.timing)
+                a.stopTiming(false);
             else
-                this.startTiming(this.haha);
+                a.startTiming(a.haha);
         }
         this.startTiming=function(cb){
             var a=this;
@@ -157,15 +187,20 @@
             if(reset)this.time=this.stages[this.stage][1];
             $timeout.cancel(this.timerPromise);
         }
-
+        this.inc=function(n){
+            if (typeof(n)=="number")n++;
+            else n=Number(n)+1;
+            return n;
+        };
         try {
             this.decodeData(this.data);
         }catch (e){
             this.stages=[['new activity',1]];
+            this.groups=['组1','组2','组3'];
             this.setStage(0);
         }
         if (this.stages.length==0)this.stages=[['new activity',1]];
-        this.groups=['组1','组2','组3']
+
 
 
     }])

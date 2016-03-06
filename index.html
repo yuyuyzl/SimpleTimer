@@ -20,9 +20,15 @@
     <nav class="nav navbar-default navbar-fixed-top navadd unselectable">
         <div class="container">
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <a class="navbar-brand" ng-click="mc.page=0">CUPT模拟战</a>
             </div>
-            <div class="navbar-collapse collapse">
+            <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li ng-class="{'active':mc.page==0}"><a ng-click="mc.page=0">计时</a></li>
                     <li ng-class="{'active':mc.page==1}"><a ng-click="mc.page=1">配置</a></li>
@@ -32,15 +38,15 @@
     </nav>
 
     <footer class="footer navbar-default navadd" ng-show="mc.page==0">
-        <div class="container" align="center" >
+        <div class="container-fluid" align="center" >
             <ul class="nav navbar-nav navbar-nav1">
-                <li><a ng-click="mc.setsround(mc.sround-1)">上一阶段</a></li>
-                <li><a ng-click="mc.setStage(mc.stage-1)">上一个</a></li>
-                <li><a ng-click="mc.time=mc.time+1">&nbsp;+&nbsp;1s&nbsp;</a></li>
-                <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton()">开始计时&nbsp;&nbsp;/&nbsp;&nbsp;暂停计时</a></li>
-                <li><a ng-click="mc.stopTiming(true)">重置计时</a></li>
-                <li><a ng-click="mc.setStage(mc.stage+1)">下一个</a></li>
-                <li><a ng-click="mc.setsround(mc.sround+1)">下一阶段</a></li>
+                <li><a ng-click="mc.setsround(mc.sround-1);mc.pushData()">上一阶段</a></li>
+                <li><a ng-click="mc.setStage(mc.stage-1);mc.pushData()">上一个</a></li>
+                <li><a ng-click="mc.time=mc.inc(mc.time);mc.sendDo('+')">&nbsp;+&nbsp;1s&nbsp;</a></li>
+                <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton();mc.sendDo('P')">开始计时&nbsp;&nbsp;/&nbsp;&nbsp;暂停计时</a></li>
+                <li><a ng-click="mc.stopTiming(true);mc.pushData()">重置计时</a></li>
+                <li><a ng-click="mc.setStage(mc.stage+1);mc.pushData()">下一个</a></li>
+                <li><a ng-click="mc.setsround(mc.sround+1);mc.pushData()">下一阶段</a></li>
             </ul>
         </div>
     </footer>
@@ -48,14 +54,14 @@
     <div class="container" role="main" style="height: 100%">
 
         <!-- Page main-->
-        <div ng-show="mc.page==0" style="height: 100%" ng-class="{'hideMouse':mc.hidemouse}" ng-click="mc.autoNext()" ng-mouseover="mc.onMoveOnMain()">
-            <main align="center" class="col-md-8" style="position: relative;  top: 50%;  transform: translateY(-50%)">
+        <div ng-show="mc.page==0" style="height: 100%" ng-class="{'hideMouse':mc.hidemouse}" ng-click="mc.autoNext();mc.sendDo('A')" ng-mouseover="mc.onMoveOnMain()">
+            <main align="center" class="col-md-8 allCenter">
                 <div>
                     <h1 class="timerText" ng-bind="mc.stages[mc.stage][0]"></h1>
                     <p class="timerMain" ng-bind="mc.formatTime(mc.time)"></p>
                 </div>
             </main>
-            <main class="col-md-4" style="position: relative;  top: 50%;  transform: translateY(-50%); padding-left: 50px">
+            <main class="col-md-4 allCenter" style="padding-left: 50px">
                 <div>
                     <h2 class="roundText">第 <span ng-bind="mc.sround"></span> 阶段</h2>
                     <br>

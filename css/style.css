@@ -48,6 +48,20 @@
 	color: #8e8e8e;
 }
 
+@media (min-width: 991px) {
+
+	.allCenter{
+		position: relative;  top: 50%;  transform: translateY(-50%);
+	}
+}
+
+@media (max-width: 991px) {
+
+	.allCenter{
+		text-align: center;
+	}
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
