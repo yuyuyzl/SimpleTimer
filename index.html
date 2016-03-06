@@ -8,10 +8,12 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <script src="node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>
     <script src="javascript/angular.min.js"></script>
     <script src="javascript/app.js"></script>
     <script src="javascript/jquery.min.js"></script>
     <script src="javascript/bootstrap.min.js"></script>
+
 </head>
 
 <body ng-controller="mainCtrl as mc" role="document" style="cursor:default; padding-top:70px; height: 90%" class="unselectable">
@@ -94,6 +96,8 @@
             </div>
             <br>
             <p>URL with data: <input ng-model="mc.url+'?'+mc.encodeData()" style="width: 90%"></p>
+            <br>
+            <p ng-show="mc.id!=null">Session ID: <span ng-bind="mc.id"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enter Room Number:<input ng-model="mc.roomid"><button ng-click="mc.joinRoom()">Enter</button><button ng-click="mc.pushData()">Push</button></p>
         </main>
     </div>
 </body>
