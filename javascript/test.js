@@ -1,5 +1,3 @@
-var a={'1':123}
-if (a['1'])console.log('true');
-else console.log('false');
-if (a['2'])console.log('true');
-else console.log('false');
+a={2:1}
+b={2:1,3:3}
+console.log(a!=b);

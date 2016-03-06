@@ -37,16 +37,16 @@
         </div>
     </nav>
 
-    <footer class="footer navbar-default navadd" ng-show="mc.page==0">
+    <footer class="footer navbar-default navadd">
         <div class="container-fluid" align="center" >
             <ul class="nav navbar-nav navbar-nav1">
-                <li><a ng-click="mc.setsround(mc.sround-1);mc.pushData()">-S</a></li>
-                <li><a ng-click="mc.setStage(mc.stage-1);mc.pushData()">-P</a></li>
+                <li><a ng-click="mc.setsround(mc.sround-1);mc.sendDo('-S')">-S</a></li>
+                <li><a ng-click="mc.setStage(mc.stage-1);mc.sendDo('-P')">-P</a></li>
                 <li><a ng-click="mc.time=mc.inc(mc.time);mc.sendDo('+')">+1</a></li>
                 <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton();mc.sendDo('P')">S/P</a></li>
-                <li><a ng-click="mc.stopTiming(true);mc.pushData()">RS</a></li>
-                <li><a ng-click="mc.setStage(mc.stage+1);mc.pushData()">+P</a></li>
-                <li><a ng-click="mc.setsround(mc.sround+1);mc.pushData()">+S</a></li>
+                <li><a ng-click="mc.stopTiming(true);mc.sendDo('R')">RS</a></li>
+                <li><a ng-click="mc.setStage(mc.stage+1);mc.sendDo('+P')">+P</a></li>
+                <li><a ng-click="mc.setsround(mc.sround+1);mc.sendDo('+S')">+S</a></li>
             </ul>
         </div>
     </footer>
@@ -80,7 +80,6 @@
                     <tr ng-repeat="i in mc.getRangeArray(mc.stages.length)">
                         <td><input ng-model="mc.stages[i][0]" style="width: 30vw"></td>
                         <td><input ng-model="mc.stages[i][1]" style="width: 3vw"></td>
-                        <td><a ng-click="mc.setStage(i);mc.page=0">[-Select-]</a> </td>
                         <td><a ng-click="mc.upStageAt(i)" ng-show="i>0">[-Up-]</a></td>
                         <td><a ng-click="mc.upStageAt(i+1)" ng-show="i<mc.stages.length-1">[-Down-]</a></td>
                         <td><a ng-click="mc.rmvStageAt(i)">[-Delete-]</a></td>
@@ -103,7 +102,7 @@
             <br>
             <p>URL with data: <input ng-model="mc.url+'?'+mc.encodeData()" style="width: 90%"></p>
             <br>
-            <p ng-show="mc.id!=null">Session ID: <span ng-bind="mc.id"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enter Room Number:<input ng-model="mc.roomid"><button ng-click="mc.joinRoom()">Enter</button><button ng-click="mc.pushData()">Push</button></p>
+            <p ng-show="mc.id!=null">Session ID: <span ng-bind="mc.id"></span><br>Enter Room Number:<input ng-model="mc.roomid"><button ng-click="mc.joinRoom()">Enter</button><button ng-click="mc.pushData()">Push</button><button ng-click="mc.pullData()">Pull</button></p>
         </main>
     </div>
 </body>

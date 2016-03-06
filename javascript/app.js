@@ -5,23 +5,38 @@
     var app = angular.module('main', []);
     app.controller('mainCtrl',['$scope','$q','$timeout', function($scope,$q,$timeout){
         var a=this;
-        this.encodeData=function(){
-            var data={
-                'stages':this.stages,
-                'stage':this.stage,
-                'sround':this.sround,
-                'time':this.time,
-                'groups':this.groups
+        this.encodeData=function(elements){
+            var data={};
+            if (elements==null){
+                data={
+                    'stages':this.stages,
+                    'stage':this.stage,
+                    'sround':this.sround,
+                    'time':this.time,
+                    'groups':this.groups,
+                    'roomid':this.roomid
+                }
+            }else{
+                data={};
+                if(elements.indexOf('stages')!=-1)data['stages']=this.stages;
+                if(elements.indexOf('stage')!=-1)data['stage']=this.stage;
+                if(elements.indexOf('sround')!=-1)data['sround']=this.sround;
+                if(elements.indexOf('time')!=-1)data['time']=this.time;
+                if(elements.indexOf('groups')!=-1)data['groups']=this.groups;
             }
             return window.btoa(unescape(encodeURIComponent(JSON.stringify(data))));
         }
         this.decodeData=function(b64string){
             var data=JSON.parse(decodeURIComponent(escape(window.atob(b64string))));
-            this.stages=data['stages'];
-            this.groups=data['groups'];
-            this.setsround(data['sround']);
-            this.setStage(data['stage']);
-            this.time=data['time'];
+            if(data['stages'])this.stages=data['stages'];
+            if(data['groups'])this.groups=data['groups'];
+            if(data['sround'])this.setsround(data['sround']);
+            if(data['stage'])this.setStage(data['stage']);
+            if(data['time'])this.time=data['time'];
+            if (this.roomid==null){
+                this.roomid=data['roomid'];
+                this.joinRoom()
+            }
         }
         this.hidemouse=false;
         this.onMoveTimer=null;
@@ -30,17 +45,22 @@
         this.id=null;
         this.roomid=null;
 
-        this.ignoreNextDo=false;
+        var ignoreNextDo=false;
+        var ignoreNextSync=false;
         this.socket.on("id",function(id){
             a.id=id;
             console.log("get id=",id);
         });
         this.socket.on("dataSync",function(data){
-            console.log("data get: "+data);
-            $timeout(function(){a.decodeData(data)},0);
+            if(!ignoreNextSync) {
+                console.log("data get: " + data);
+                $timeout(function () {
+                    a.decodeData(data)
+                }, 0);
+            }else ignoreNextSync=false;
         })
         this.socket.on('do',function(data){
-            if (!a.ignoreNextDo){
+            if (!ignoreNextDo){
                 switch (data){
                     case 'P':
                         $timeout(a.playButton,0);
@@ -53,14 +73,39 @@
                             a.time=a.inc(a.time);
                         },0);
                         break;
+                    case 'R':
+                        $timeout(function(){
+                            a.stopTiming(true);
+                        },0);
+                        break;
+                    case '+P':
+                        $timeout(function(){
+                            a.setStage(a.stage+1);
+                        },0);
+                        break;
+                    case '+S':
+                    $timeout(function(){
+                        a.setsround(a.sround+1);
+                    },0);
+                    break;
+                    case '-P':
+                    $timeout(function(){
+                        a.setStage(a.stage-1);
+                    },0);
+                    break;
+                    case '-S':
+                    $timeout(function(){
+                        a.setsround(a.sround-1);
+                    },0);
+                    break;
                 }
             }else {
-                a.ignoreNextDo=false;
+                ignoreNextDo=false;
 
             }
         })
         this.sendDo=function(data){
-            this.ignoreNextDo=true;
+            ignoreNextDo=true;
             this.socket.emit('do',data);
         }
         this.joinRoom=function(){
@@ -69,7 +114,11 @@
             }
         }
         this.pushData=function(){
-            this.socket.emit("pushData",this.encodeData());
+
+            a.socket.emit("pushData",a.encodeData());
+        }
+        this.pullData=function(){
+            a.socket.emit("pullData",null);
         }
         //************socket.io part*********
         this.onMoveOnMain=function(){
@@ -128,28 +177,28 @@
 
         this.setStage=function(n){
             if (n<0) {
-                if (this.sround > 1) {
-                    this.sround--;
-                    this.stage=this.stages.length-1;
-                    this.stopTiming(true);
+                if (a.sround > 1) {
+                    a.sround--;
+                    a.stage=a.stages.length-1;
+                    a.stopTiming(true);
                 }
                 return;
             }
-            if (n>=this.stages.length) {
-                if (this.sround < 3) {
-                    this.sround++;
-                    this.stage=0;
-                    this.stopTiming(true);
+            if (n>=a.stages.length) {
+                if (a.sround < 3) {
+                    a.sround++;
+                    a.stage=0;
+                    a.stopTiming(true);
                 }
                 return;
             }
-            this.stage=n;
-            this.stopTiming(true);
+            a.stage=n;
+            a.stopTiming(true);
         }
         this.setsround=function(n){
             if(n<=0||n>=4)return;
-            this.sround=n;
-            this.stopTiming(true);
+            a.sround=n;
+            a.stopTiming(true);
         }
         this.haha=function(a){
             //Todo play something
@@ -200,8 +249,26 @@
             this.setStage(0);
         }
         if (this.stages.length==0)this.stages=[['new activity',1]];
+        var dataSyncTimer=null;
 
+        $scope.$watch('mc.groups',function(newV,oldV){
+            if ((newV!==oldV)){
+                if (dataSyncTimer)$timeout.cancel(dataSyncTimer);
+                dataSyncTimer=$timeout(function(){
 
+                    a.pushData(['stages','groups']);
+                },10);
+            }
+        },true);
+        $scope.$watch('mc.stages',function(newV,oldV){
+            if ((newV!==oldV)) {
+                if (dataSyncTimer)$timeout.cancel(dataSyncTimer);
+                dataSyncTimer=$timeout(function(){
+
+                    a.pushData(['stages','groups']);
+                },10);
+            }
+        },true);
 
     }])
 

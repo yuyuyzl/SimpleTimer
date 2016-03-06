@@ -51,7 +51,8 @@ var http = require("http").createServer(function (req, res) {
 
 
 
-var rooms={};
+var roomdata={};
+var roomuser={}
 var io  =require("socket.io")(http);
 io.on('connection',function(socket){
     var roomid=null;
@@ -59,15 +60,38 @@ io.on('connection',function(socket){
     console.log("new connection, id="+socket.id);
     socket.on("disconnect",function(){
         console.log(socket.id+" disconnected");
+        if (roomid!=null){
+            roomuser[roomid]--;
+            console.log(roomid+','+roomuser[roomid]);
+        }
     });
     socket.on('joinRoom',function(id){
+        if (roomid!=null){
+            socket.leave(roomid);
+            roomuser[roomid]--;
+            console.log(roomid+','+roomuser[roomid]);
+            if(roomuser[roomid]<=0)roomdata[roomid]=null;
+        }
+        console.log(socket.id+' joining room '+id);
         socket.join(id);
         roomid=id;
+        if(roomuser[roomid])roomuser[roomid]++;else roomuser[roomid]=1;
+        console.log(roomid+','+roomuser[roomid]);
+        if (roomdata!=null)socket.emit('dataSync',roomdata[roomid]);
     });
     socket.on('pushData',function(data){
-        io.to(roomid).emit('dataSync',data);
+        if(roomdata[roomid]!=data) {
+            roomdata[roomid] = data;
+            console.log(socket.id + ' is pushing data');
+            io.to(roomid).emit('dataSync', data);
+        }
+    });
+    socket.on('pullData',function(){
+        console.log('pulling data');
+        if(roomdata[roomid]!=null)socket.emit('dataSync',roomdata[roomid]);
     });
     socket.on('do',function(data){
+        console.log('doing');
         io.to(roomid).emit('do',data);
     })
 
@@ -75,4 +99,4 @@ io.on('connection',function(socket){
 
 
 http.listen(port);
-//console.log("Server running at http://127.0.0.1:8080/");
+console.log("Server running at http://127.0.0.1:8080/");
