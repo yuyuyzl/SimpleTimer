@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="dfcdc02c-8980-41c1-b5a6-bf824b8c85ee" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <list id="8d7d3ddf-9916-4d2b-bfe9-992e27d203b7" name="Failed commit: Default" comment="init" />
     <ignored path="SimpleTimer.iws" />
@@ -25,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6666667">
-              <caret line="97" column="88" selection-start-line="97" selection-start-column="88" selection-end-line="97" selection-end-column="88" />
+            <state vertical-scroll-proportion="-3.2142856">
+              <caret line="87" column="25" selection-start-line="87" selection-start-column="25" selection-end-line="87" selection-end-column="25" />
               <folding>
                 <element signature="n#style#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -67,10 +66,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="server.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
+            <state vertical-scroll-proportion="2.114094">
               <caret line="70" column="38" selection-start-line="70" selection-start-column="38" selection-end-line="70" selection-end-column="38" />
               <folding />
             </state>
@@ -425,11 +424,17 @@
       <option name="project" value="LOCAL" />
       <updated>1457269620912</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="yes,done.">
+      <created>1457270336738</created>
+      <option name="number" value="00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1457270336738</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="1932" height="1047" extended-state="0" />
+    <frame x="-7" y="0" width="1932" height="1047" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.49369085" order="1" side_tool="false" content_ui="combo" />
@@ -468,7 +473,8 @@
     <MESSAGE value="init" />
     <MESSAGE value="add socket.io rooms and push data.&#10;backup for modifying all the data string system." />
     <MESSAGE value="rewrite data encoding, use json to object.&#10;collapsed navbar on small devices.&#10;and more." />
-    <option name="LAST_COMMIT_MESSAGE" value="rewrite data encoding, use json to object.&#10;collapsed navbar on small devices.&#10;and more." />
+    <MESSAGE value="yes,done." />
+    <option name="LAST_COMMIT_MESSAGE" value="yes,done." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -635,14 +641,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="70" column="38" selection-start-line="70" selection-start-column="38" selection-end-line="70" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/error404.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-9.0">
@@ -699,8 +697,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6666667">
-          <caret line="97" column="88" selection-start-line="97" selection-start-column="88" selection-end-line="97" selection-end-column="88" />
+        <state vertical-scroll-proportion="-3.2142856">
+          <caret line="87" column="25" selection-start-line="87" selection-start-column="25" selection-end-line="87" selection-end-column="25" />
           <folding>
             <element signature="n#style#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -714,6 +712,14 @@
             <element signature="n#style#0;n#input#0;n#td#1;n#tr#2;n#tbody#0;n#table#0;n#div#0;n#main#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#input#0;n#p#0;n#main#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="2.114094">
+          <caret line="70" column="38" selection-start-line="70" selection-start-column="38" selection-end-line="70" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
