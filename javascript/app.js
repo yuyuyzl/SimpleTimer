@@ -17,13 +17,34 @@
                 this.stages.push([data.shift(),data.shift()]);
 
             }
-            this.setStage(0);
         }
         this.hidemouse=false;
         this.onMoveTimer=null;
+        //*******socket.io part*************
+        this.socket=io();
+        this.id=null;
+        this.roomid=null;
+        var a=this;
+        this.socket.on("id",function(id){
+            a.id=id;
+            console.log("get id=",id);
+        });
+        this.socket.on("dataSync",function(data){
+            console.log("data get: "+data);
+            $timeout(function(){a.decodeData(data)},0);
+        })
+        this.joinRoom=function(){
+            if (this.roomid!=null){
+                this.socket.emit("joinRoom",this.roomid);
+            }
+        }
+        this.pushData=function(){
+            this.socket.emit("pushData",this.encodeData());
+        }
+        //************socket.io part*********
         this.onMoveOnMain=function(){
             var a=this;
-            console.log('1')
+            //console.log('1')
             this.hidemouse=false;
             if(this.onMoveTimer)$timeout.cancel(this.onMoveTimer);
             this.onMoveTimer=$timeout(function(){
@@ -145,6 +166,8 @@
         }
         if (this.stages.length==0)this.stages=[['new activity',1]];
         this.groups=['组1','组2','组3']
+
+
     }])
 
 })();
