@@ -52,46 +52,82 @@ var http = require("http").createServer(function (req, res) {
 
 
 var roomdata={};
-var roomuser={}
+var roomuser={};
+var roomdatatimer={};
 var io  =require("socket.io")(http);
+Date.prototype.Format = function (fmt) { //author: meizz
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
 io.on('connection',function(socket){
+    function log(text){
+        var d=new Date();
+        console.log(d.Format('[yyyy-MM-dd hh:mm:ss]')+' '+socket.id+' '+text);
+    }
     var roomid=null;
     socket.emit('id',socket.id);
-    console.log("new connection, id="+socket.id);
+    log("new connection");
     socket.on("disconnect",function(){
-        console.log(socket.id+" disconnected");
+        log("disconnected");
         if (roomid!=null){
             roomuser[roomid]--;
-            console.log(roomid+','+roomuser[roomid]);
+            if(roomuser[roomid]<=0){
+                if(roomdatatimer[roomid])clearTimeout(roomdatatimer[roomid]);
+                var deletedataid=roomid;
+                roomdatatimer[roomid]=setTimeout(function(){
+                    console.log('deleting data in '+deletedataid);
+                    roomdata[deletedataid]=null;
+                },3600000);
+            }
+            
         }
     });
     socket.on('joinRoom',function(id){
         if (roomid!=null){
             socket.leave(roomid);
             roomuser[roomid]--;
-            console.log(roomid+','+roomuser[roomid]);
-            if(roomuser[roomid]<=0)roomdata[roomid]=null;
+            //log(roomid+','+roomuser[roomid]);
+            if(roomuser[roomid]<=0){
+                if(roomdatatimer[roomid])clearTimeout(roomdatatimer[roomid]);
+                var deletedataid=roomid;
+                roomdatatimer[roomid]=setTimeout(function(){
+                    console.log('deleting data in '+deletedataid);
+                    roomdata[deletedataid]=null;
+                },3600000);
+            }
         }
-        console.log(socket.id+' joining room '+id);
+        log('joining room '+id);
         socket.join(id);
         roomid=id;
         if(roomuser[roomid])roomuser[roomid]++;else roomuser[roomid]=1;
-        console.log(roomid+','+roomuser[roomid]);
+        //console.log(roomid+','+roomuser[roomid]);
+        if(roomdatatimer[roomid])clearTimeout(roomdatatimer[roomid]);
         if (roomdata!=null)socket.emit('dataSync',{'data':roomdata[roomid]});
     });
     socket.on('pushData',function(data){
         if(roomdata[roomid]!=data['data']) {
             roomdata[roomid] = data['data'];
-            console.log(socket.id + ' is pushing data');
+            log('pushing data');
             io.to(roomid).emit('dataSync', data);
         }
     });
     socket.on('pullData',function(){
-        console.log('pulling data');
+        log('pulling data');
         if(roomdata[roomid]!=null)socket.emit('dataSync',roomdata[roomid]);
     });
     socket.on('do',function(data){
-        console.log('doing');
+        log('doing '+data);
         io.to(roomid).emit('do',data);
     })
 

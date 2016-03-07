@@ -26,7 +26,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                
+
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -100,7 +100,7 @@
 
             </div>
             <br>
-            <p>URL with data: <input ng-model="mc.url+'?'+mc.encodeData()" style="width: 90%"></p>
+            <p>URL with data: <input ng-model="mc.url+'?'+mc.encodeData()" style="width: 50%"> <a ng-href="{{mc.url+'?'+mc.encodeData()}}">Link</a></p>
             <br>
             <p ng-show="mc.id!=null">Session ID: <span ng-bind="mc.id"></span><br>Enter Room Number:<input ng-model="mc.roomid"><button ng-click="mc.joinRoom()">Enter</button><button ng-click="mc.pushData()">Push</button><button ng-click="mc.pullData()">Pull</button></p>
         </main>
