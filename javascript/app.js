@@ -5,9 +5,9 @@
     var app = angular.module('main', []);
     app.controller('mainCtrl',['$scope','$q','$timeout', function($scope,$q,$timeout){
         var a=this;
-        this.encodeData=function(elements){
+        this.encodeData=function(){
             var data={};
-            if (elements==null){
+
                 data={
                     'stages':this.stages,
                     'stage':this.stage,
@@ -16,23 +16,16 @@
                     'groups':this.groups,
                     'roomid':this.roomid
                 }
-            }else{
-                data={};
-                if(elements.indexOf('stages')!=-1)data['stages']=this.stages;
-                if(elements.indexOf('stage')!=-1)data['stage']=this.stage;
-                if(elements.indexOf('sround')!=-1)data['sround']=this.sround;
-                if(elements.indexOf('time')!=-1)data['time']=this.time;
-                if(elements.indexOf('groups')!=-1)data['groups']=this.groups;
-            }
+
             return window.btoa(unescape(encodeURIComponent(JSON.stringify(data))));
         }
-        this.decodeData=function(b64string){
+        this.decodeData=function(b64string,config){
             var data=JSON.parse(decodeURIComponent(escape(window.atob(b64string))));
-            if(data['stages'])this.stages=data['stages'];
-            if(data['groups'])this.groups=data['groups'];
-            if(data['sround'])this.setsround(data['sround']);
-            if(data['stage'])this.setStage(data['stage']);
-            if(data['time'])this.time=data['time'];
+            if(!config||config.indexOf('stages')!=-1)this.stages=data['stages'];
+            if(!config||config.indexOf('groups')!=-1)this.groups=data['groups'];
+            if(!config||config.indexOf('sround')!=-1)this.setsround(data['sround']);
+            if(!config||config.indexOf('stage')!=-1)this.setStage(data['stage']);
+            if(!config||config.indexOf('time')!=-1)this.time=data['time'];
             if (this.roomid==null){
                 this.roomid=data['roomid'];
                 this.joinRoom()
@@ -55,7 +48,7 @@
             if(!ignoreNextSync) {
                 console.log("data get: " + data);
                 $timeout(function () {
-                    a.decodeData(data)
+                    a.decodeData(data['data'],data['config'])
                 }, 0);
             }else ignoreNextSync=false;
         })
@@ -113,9 +106,9 @@
                 this.socket.emit("joinRoom",this.roomid);
             }
         }
-        this.pushData=function(){
+        this.pushData=function(config){
 
-            a.socket.emit("pushData",a.encodeData());
+            a.socket.emit("pushData",{'data':a.encodeData(),'config':config});
         }
         this.pullData=function(){
             a.socket.emit("pullData",null);

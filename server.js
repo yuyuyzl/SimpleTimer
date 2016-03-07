@@ -77,11 +77,11 @@ io.on('connection',function(socket){
         roomid=id;
         if(roomuser[roomid])roomuser[roomid]++;else roomuser[roomid]=1;
         console.log(roomid+','+roomuser[roomid]);
-        if (roomdata!=null)socket.emit('dataSync',roomdata[roomid]);
+        if (roomdata!=null)socket.emit('dataSync',{'data':roomdata[roomid]});
     });
     socket.on('pushData',function(data){
-        if(roomdata[roomid]!=data) {
-            roomdata[roomid] = data;
+        if(roomdata[roomid]!=data['data']) {
+            roomdata[roomid] = data['data'];
             console.log(socket.id + ' is pushing data');
             io.to(roomid).emit('dataSync', data);
         }
