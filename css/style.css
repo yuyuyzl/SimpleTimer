@@ -31,23 +31,65 @@
 .hideMouse{
 	cursor: none;
 }
+@media (min-width: 1200px) {
+	.timerMain {
+		font-size: 160px;
+		padding-top: 20px;
+	}
 
-.timerMain{
-	font-size: 7.5vw;
-	padding-top: 20px;
-}
-.timerText {
-	font-size: 3vw;
-}
-.groupName{
-	font-size: 1.3vw;
-	color: #a5a5a5;
-}
-.roundText{
-	font-size: 2.7vw;
-	color: #8e8e8e;
-}
+	.timerText {
+		font-size: 54px;
+	}
 
+	.groupName {
+		font-size: 30px;
+		color: #a5a5a5;
+	}
+
+	.roundText {
+		font-size: 44px;
+		color: #8e8e8e;
+	}
+}
+@media (min-width: 991px) and (max-width: 1200px) {
+	.timerMain {
+		font-size: 12vw;
+		padding-top: 20px;
+	}
+
+	.timerText {
+		font-size: 4.3vw;
+	}
+
+	.groupName {
+		font-size: 2.2vw;
+		color: #a5a5a5;
+	}
+
+	.roundText {
+		font-size: 3.4vw;
+		color: #8e8e8e;
+	}
+}
+@media (max-width: 991px) {
+	.timerMain {
+		font-size: 13vw;
+	}
+
+	.timerText {
+		font-size: 5vw;
+	}
+
+	.groupName {
+		font-size: 3vw;
+		color: #a5a5a5;
+	}
+
+	.roundText {
+		font-size: 4vw;
+		color: #8e8e8e;
+	}
+}
 @media (min-width: 991px) {
 
 	.allCenter{
