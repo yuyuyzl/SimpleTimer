@@ -16,7 +16,7 @@
 
 </head>
 
-<body ng-controller="mainCtrl as mc" role="document" style="cursor:default; padding-top:5%;padding-bottom: 5%; height: 90%" class="unselectable">
+<body ng-controller="mainCtrl as mc" role="document" style="cursor:default; height: 100%" class="unselectable">
     <nav class="nav navbar-default navbar-fixed-top navadd unselectable">
         <div class="container">
             <div class="navbar-header">
@@ -40,58 +40,59 @@
 
 
     <div class="container" role="main" style="height: 100%">
+        <div ng-class="{'allCenter':mc.page==0}" style="padding-top: 60px;padding-bottom: 60px">
+            <!-- Page main-->
+            <div ng-show="mc.page==0" class="allCenter" ng-class="{'hideMouse':mc.hidemouse}" ng-click="mc.autoNext();mc.sendDo('A')" ng-mouseover="mc.onMoveOnMain()">
+                <main align="center" class="col-md-8 allCenter">
+                    <div>
+                        <h1 class="timerText" ng-bind="mc.stages[mc.stage][0]"></h1>
+                        <p class="timerMain" ng-bind="mc.formatTime(mc.time)"></p>
+                    </div>
+                </main>
+                <main class="col-md-4 allCenter" style="padding-left: 50px;padding-right: 50px">
+                    <div>
+                        <h2 class="roundText">第 <span ng-bind="mc.sround"></span> 阶段</h2>
+                        <br>
+                        <h2 class="groupName">正方：<span ng-bind="mc.groups[mc.sround-1]"></span></h2>
+                        <h2 class="groupName">反方：<span ng-bind="mc.groups[mc.sround % 3]"></span></h2>
+                        <h2 class="groupName">评论方：<span ng-bind="mc.groups[(mc.sround+1) % 3]"></span></h2>
+                    </div>
+                </main>
+            </div>
 
-        <!-- Page main-->
-        <div ng-show="mc.page==0" style="height: 100%" ng-class="{'hideMouse':mc.hidemouse}" ng-click="mc.autoNext();mc.sendDo('A')" ng-mouseover="mc.onMoveOnMain()">
-            <main align="center" class="col-md-8 allCenter">
-                <div>
-                    <h1 class="timerText" ng-bind="mc.stages[mc.stage][0]"></h1>
-                    <p class="timerMain" ng-bind="mc.formatTime(mc.time)"></p>
-                </div>
-            </main>
-            <main class="col-md-4 allCenter" style="padding-left: 50px;padding-right: 50px">
-                <div>
-                    <h2 class="roundText">第 <span ng-bind="mc.sround"></span> 阶段</h2>
-                    <br>
-                    <h2 class="groupName">正方：<span ng-bind="mc.groups[mc.sround-1]"></span></h2>
-                    <h2 class="groupName">反方：<span ng-bind="mc.groups[mc.sround % 3]"></span></h2>
-                    <h2 class="groupName">评论方：<span ng-bind="mc.groups[(mc.sround+1) % 3]"></span></h2>
-                </div>
-            </main>
-        </div>
-
-        <!-- Page settings-->
-        <main ng-show="mc.page==1" style="padding-bottom: 60px">
-            <table class="table">
-                <thead><th>显示文字</th><th>时间（s）</th><th/><th/><th/><th/></thead>
-                <tbody>
-                    <tr ng-repeat="i in mc.getRangeArray(mc.stages.length)">
-                        <td><input ng-model="mc.stages[i][0]" style="width: 30vw"></td>
-                        <td><input ng-model="mc.stages[i][1]" style="width: 3vw"></td>
-                        <td><a ng-click="mc.upStageAt(i)" ng-show="i>0">[-Up-]</a></td>
-                        <td><a ng-click="mc.upStageAt(i+1)" ng-show="i<mc.stages.length-1">[-Down-]</a></td>
-                        <td><a ng-click="mc.rmvStageAt(i)">[-Delete-]</a></td>
-                        <td><a ng-click="mc.addStageAt(i)">[-Add-]</a></td>
-                    </tr>
-                    <tr><td/><td/><td/><td/><td/><td><a ng-click="mc.stages.push(['new activity',1])">[-Add-]</a></td></tr>
-                </tbody>
-            </table>
-            <div class="row">
+            <!-- Page settings-->
+            <main ng-show="mc.page==1">
                 <table class="table">
-                    <thead><th>编号</th><th>组名</th><th>阶段 - 角色</th></thead>
+                    <thead><th>显示文字</th><th>时间（s）</th><th/><th/><th/><th/></thead>
                     <tbody>
-                    <tr><td>组1</td><td><input ng-model="mc.groups[0]" style="width: 30vw"></td><td>1-正 2-反 3-评</td></tr>
-                    <tr><td>组2</td><td><input ng-model="mc.groups[1]" style="width: 30vw"></td><td>1-评 2-正 3-反</td></tr>
-                    <tr><td>组3</td><td><input ng-model="mc.groups[2]" style="width: 30vw"></td><td>1-反 2-评 3-正</td></tr>
+                        <tr ng-repeat="i in mc.getRangeArray(mc.stages.length)">
+                            <td><input ng-model="mc.stages[i][0]" style="width: 30vw"></td>
+                            <td><input ng-model="mc.stages[i][1]" style="width: 3vw"></td>
+                            <td><a ng-click="mc.upStageAt(i)" ng-show="i>0">[-Up-]</a></td>
+                            <td><a ng-click="mc.upStageAt(i+1)" ng-show="i<mc.stages.length-1">[-Down-]</a></td>
+                            <td><a ng-click="mc.rmvStageAt(i)">[-Delete-]</a></td>
+                            <td><a ng-click="mc.addStageAt(i)">[-Add-]</a></td>
+                        </tr>
+                        <tr><td/><td/><td/><td/><td/><td><a ng-click="mc.stages.push(['new activity',1])">[-Add-]</a></td></tr>
                     </tbody>
                 </table>
+                <div class="row">
+                    <table class="table">
+                        <thead><th>编号</th><th>组名</th><th>阶段 - 角色</th></thead>
+                        <tbody>
+                        <tr><td>组1</td><td><input ng-model="mc.groups[0]" style="width: 30vw"></td><td>1-正 2-反 3-评</td></tr>
+                        <tr><td>组2</td><td><input ng-model="mc.groups[1]" style="width: 30vw"></td><td>1-评 2-正 3-反</td></tr>
+                        <tr><td>组3</td><td><input ng-model="mc.groups[2]" style="width: 30vw"></td><td>1-反 2-评 3-正</td></tr>
+                        </tbody>
+                    </table>
 
-            </div>
-            <br>
-            <p>URL with data: <input ng-model="mc.url+'?'+mc.encodeData()" style="width: 50%"> <a ng-href="{{mc.url+'?'+mc.encodeData()}}">Link</a></p>
-            <br>
-            <p ng-show="mc.id!=null">Session ID: <span ng-bind="mc.id"></span><br>Enter Room Number:<input ng-model="mc.roomid"><button ng-click="mc.joinRoom()">Enter</button><button ng-click="mc.pushData()">Push</button><button ng-click="mc.pullData()">Pull</button></p>
-        </main>
+                </div>
+                <br>
+                <p>URL with data: <input ng-model="mc.url+'?'+mc.encodeData()" style="width: 50%"> <a ng-href="{{mc.url+'?'+mc.encodeData()}}">Link</a></p>
+                <br>
+                <p ng-show="mc.id!=null">Session ID: <span ng-bind="mc.id"></span><br>Enter Room Number:<input ng-model="mc.roomid"><button ng-click="mc.joinRoom()">Enter</button><button ng-click="mc.pushData()">Push</button><button ng-click="mc.pullData()">Pull</button></p>
+            </main>
+        </div>
     </div>
     <footer class="footer navbar-default navadd">
         <div class="container" align="center" >
