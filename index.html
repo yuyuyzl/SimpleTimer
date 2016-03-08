@@ -16,7 +16,7 @@
 
 </head>
 
-<body ng-controller="mainCtrl as mc" role="document" style="cursor:default; padding-top:70px; height: 90%" class="unselectable">
+<body ng-controller="mainCtrl as mc" role="document" style="cursor:default; padding-top:5%;padding-bottom: 5%; height: 90%" class="unselectable">
     <nav class="nav navbar-default navbar-fixed-top navadd unselectable">
         <div class="container">
             <div class="navbar-header">
@@ -37,19 +37,7 @@
         </div>
     </nav>
 
-    <footer class="footer navbar-default navadd">
-        <div class="container-fluid" align="center" >
-            <ul class="nav navbar-nav navbar-nav1">
-                <li><a ng-click="mc.setsround(mc.sround-1);mc.sendDo('-S')">-S</a></li>
-                <li><a ng-click="mc.setStage(mc.stage-1);mc.sendDo('-P')">-P</a></li>
-                <li><a ng-click="mc.time=mc.inc(mc.time);mc.sendDo('+')">+1</a></li>
-                <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton();mc.sendDo('P')">S/P</a></li>
-                <li><a ng-click="mc.stopTiming(true);mc.sendDo('R')">RS</a></li>
-                <li><a ng-click="mc.setStage(mc.stage+1);mc.sendDo('+P')">+P</a></li>
-                <li><a ng-click="mc.setsround(mc.sround+1);mc.sendDo('+S')">+S</a></li>
-            </ul>
-        </div>
-    </footer>
+
 
     <div class="container" role="main" style="height: 100%">
 
@@ -61,7 +49,7 @@
                     <p class="timerMain" ng-bind="mc.formatTime(mc.time)"></p>
                 </div>
             </main>
-            <main class="col-md-4 allCenter" style="padding-left: 50px">
+            <main class="col-md-4 allCenter" style="padding-left: 50px;padding-right: 50px">
                 <div>
                     <h2 class="roundText">第 <span ng-bind="mc.sround"></span> 阶段</h2>
                     <br>
@@ -73,9 +61,9 @@
         </div>
 
         <!-- Page settings-->
-        <main ng-show="mc.page==1">
+        <main ng-show="mc.page==1" style="padding-bottom: 60px">
             <table class="table">
-                <thead><th>显示文字</th><th>时间（s）</th><th/><th/><th/><th/><th/></thead>
+                <thead><th>显示文字</th><th>时间（s）</th><th/><th/><th/><th/></thead>
                 <tbody>
                     <tr ng-repeat="i in mc.getRangeArray(mc.stages.length)">
                         <td><input ng-model="mc.stages[i][0]" style="width: 30vw"></td>
@@ -85,7 +73,7 @@
                         <td><a ng-click="mc.rmvStageAt(i)">[-Delete-]</a></td>
                         <td><a ng-click="mc.addStageAt(i)">[-Add-]</a></td>
                     </tr>
-                    <tr><td/><td/><td/><td/><td/><td/><td><a ng-click="mc.stages.push(['new activity',1])">[-Add-]</a></td></tr>
+                    <tr><td/><td/><td/><td/><td/><td><a ng-click="mc.stages.push(['new activity',1])">[-Add-]</a></td></tr>
                 </tbody>
             </table>
             <div class="row">
@@ -105,5 +93,18 @@
             <p ng-show="mc.id!=null">Session ID: <span ng-bind="mc.id"></span><br>Enter Room Number:<input ng-model="mc.roomid"><button ng-click="mc.joinRoom()">Enter</button><button ng-click="mc.pushData()">Push</button><button ng-click="mc.pullData()">Pull</button></p>
         </main>
     </div>
+    <footer class="footer navbar-default navadd">
+        <div class="container" align="center" >
+            <ul class="nav navbar-nav navbar-nav1">
+                <li><a ng-click="mc.setsround(mc.sround-1);mc.sendDo('-S')">-S</a></li>
+                <li><a ng-click="mc.setStage(mc.stage-1);mc.sendDo('-P')">-P</a></li>
+                <li><a ng-click="mc.time=mc.inc(mc.time);mc.sendDo('+')">+1</a></li>
+                <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton();mc.sendDo('P')">S/P</a></li>
+                <li><a ng-click="mc.stopTiming(true);mc.sendDo('R')">RS</a></li>
+                <li><a ng-click="mc.setStage(mc.stage+1);mc.sendDo('+P')">+P</a></li>
+                <li><a ng-click="mc.setsround(mc.sround+1);mc.sendDo('+S')">+S</a></li>
+            </ul>
+        </div>
+    </footer>
 </body>
 </html>
