@@ -15,10 +15,10 @@
                     'time':this.time,
                     'groups':this.groups,
                     'roomid':this.roomid
-                }
+                };
 
             return window.btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-        }
+        };
         this.decodeData=function(b64string,config){
             var data=JSON.parse(decodeURIComponent(escape(window.atob(b64string))));
             if(!config||config.indexOf('stages')!=-1)this.stages=data['stages'];
@@ -30,7 +30,7 @@
                 this.roomid=data['roomid'];
                 this.joinRoom()
             }
-        }
+        };
         this.hidemouse=false;
         this.onMoveTimer=null;
         //*******socket.io part*************
@@ -51,7 +51,7 @@
                     a.decodeData(data['data'],data['config'])
                 }, 0);
             }else ignoreNextSync=false;
-        })
+        });
         this.socket.on('do',function(data){
             if (!ignoreNextDo){
                 switch (data){
@@ -96,23 +96,23 @@
                 ignoreNextDo=false;
 
             }
-        })
+        });
         this.sendDo=function(data){
             ignoreNextDo=true;
             this.socket.emit('do',data);
-        }
+        };
         this.joinRoom=function(){
             if (this.roomid!=null){
                 this.socket.emit("joinRoom",this.roomid);
             }
-        }
+        };
         this.pushData=function(config){
 
             a.socket.emit("pushData",{'data':a.encodeData(),'config':config});
-        }
+        };
         this.pullData=function(){
             a.socket.emit("pullData",null);
-        }
+        };
         //************socket.io part*********
         this.onMoveOnMain=function(){
             var a=this;
@@ -122,7 +122,7 @@
             this.onMoveTimer=$timeout(function(){
                 a.hidemouse=true;
             },1000);
-        }
+        };
         this.time=0;
         this.page=0;
         this.stage=0;
@@ -132,33 +132,33 @@
             var mm=Math.floor(n/60);
             var ss=n % 60;
             return (mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;
-        }
+        };
         this.url=window.location.href.split('?')[0];
         this.data=window.location.href.split('?')[1];
         this.addStageAt=function(n){
-            var nl=[]
+            var nl=[];
             for (var i=0;i<this.stages.length;i++){
-                if (i==n)nl.push(['new activity',1])
+                if (i==n)nl.push(['new activity',1]);
                 nl.push(this.stages[i]);
             }
             this.stages=nl;
-        }
+        };
         this.rmvStageAt=function(n){
-            var nl=[]
+            var nl=[];
             for (var i=0;i<this.stages.length;i++){
                 if (i!=n)nl.push(this.stages[i]);
             }
             this.stages=nl;
-        }
+        };
         this.upStageAt=function(n){
-            var nl=[]
+            var nl=[];
             for (var i=0;i<this.stages.length;i++){
                 if (i==n-1)nl.push(this.stages[i+1]);else
                 if (i==n) nl.push(this.stages[i-1]);else
                     nl.push(this.stages[i]);
             }
             this.stages=nl;
-        }
+        };
 
         this.getRangeArray=function(n){
             var ans=[];
@@ -187,12 +187,12 @@
             }
             a.stage=n;
             a.stopTiming(true);
-        }
+        };
         this.setsround=function(n){
             if(n<=0||n>=4)return;
             a.sround=n;
             a.stopTiming(true);
-        }
+        };
         this.haha=function(a){
             //Todo play something
 
@@ -200,14 +200,14 @@
         this.autoNext=function(){
             if (a.time==0) a.setStage(a.stage+1);
             else a.playButton();
-        }
+        };
 
         this.playButton=function(){
             if (a.timing)
                 a.stopTiming(false);
             else
                 a.startTiming(a.haha);
-        }
+        };
         this.startTiming=function(cb){
             var a=this;
             this.timing=true;
@@ -221,14 +221,14 @@
                         cb(a);
                     }
                 },1000);
-            }
+            };
             timers();
-        }
+        };
         this.stopTiming=function(reset){
             this.timing=false;
             if(reset)this.time=this.stages[this.stage][1];
             $timeout.cancel(this.timerPromise);
-        }
+        };
         this.inc=function(n){
             if (typeof(n)=="number")n++;
             else n=Number(n)+1;
