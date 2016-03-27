@@ -16,7 +16,7 @@
 
 </head>
 
-<body ng-controller="mainCtrl as mc" role="document" style="cursor:default; height: 100%" class="unselectable">
+<body ng-controller="mainCtrl as mc" role="document" style="cursor:default; height: 100%;background-image: url('img/bgp.png');background-position: 0px 50px;background-repeat: no-repeat;background-size: 100%" class="unselectable">
     <nav class="nav navbar-default navbar-fixed-top navadd unselectable">
         <div class="container">
             <div class="navbar-header">
@@ -42,7 +42,7 @@
     <div class="container" role="main" style="height: 100%">
         <div ng-class="{'allCenter':mc.page==0}" style="padding-top: 60px;padding-bottom: 60px">
             <!-- Page main-->
-            <div ng-show="mc.page==0" class="allCenter" ng-class="{'hideMouse':mc.hidemouse}" ng-click="mc.autoNext();mc.sendDo('A')" ng-mouseover="mc.onMoveOnMain()">
+            <div ng-show="mc.page==0" class="allCenter" ng-class="{'hideMouse':mc.hidemouse}" ng-mouseover="mc.onMoveOnMain()">
                 <main align="center" class="col-md-8 allCenter">
                     <div>
                         <h1 class="timerText" ng-bind="mc.stages[mc.stage][0]"></h1>
@@ -78,11 +78,12 @@
                 </table>
                 <div class="row">
                     <table class="table">
-                        <thead><th>编号</th><th>组名</th><th>阶段 - 角色</th></thead>
+                        <thead><th>编号</th><th>组名</th><th></th></thead>
                         <tbody>
-                        <tr><td>组1</td><td><input ng-model="mc.groups[0]" style="width: 30vw"></td><td>1-正 2-反 3-评</td></tr>
-                        <tr><td>组2</td><td><input ng-model="mc.groups[1]" style="width: 30vw"></td><td>1-评 2-正 3-反</td></tr>
-                        <tr><td>组3</td><td><input ng-model="mc.groups[2]" style="width: 30vw"></td><td>1-反 2-评 3-正</td></tr>
+                        <tr><td>组1</td><td><input ng-model="mc.groups[0]" style="width: 70%"></td><td></td></tr>
+                        <tr><td>组2</td><td><input ng-model="mc.groups[1]" style="width: 70%"></td><td></td></tr>
+                        <tr><td>组3</td><td><input ng-model="mc.groups[2]" style="width: 70%"></td><td></td></tr>
+                        <tr><td>组4</td><td><input ng-model="mc.groups[3]" style="width: 70%"></td><td><button ng-click="mc.shuffleGroups()">乱序</button></td></tr>
                         </tbody>
                     </table>
 
@@ -97,13 +98,13 @@
     <footer class="footer navbar-default navadd">
         <div class="container" align="center" >
             <ul class="nav navbar-nav navbar-nav1">
-                <li><a ng-click="mc.setsround(mc.sround-1);mc.sendDo('-S')">-S</a></li>
-                <li><a ng-click="mc.setStage(mc.stage-1);mc.sendDo('-P')">-P</a></li>
-                <li><a ng-click="mc.time=mc.inc(mc.time);mc.sendDo('+')">+1</a></li>
-                <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton();mc.sendDo('P')">S/P</a></li>
-                <li><a ng-click="mc.stopTiming(true);mc.sendDo('R')">RS</a></li>
-                <li><a ng-click="mc.setStage(mc.stage+1);mc.sendDo('+P')">+P</a></li>
-                <li><a ng-click="mc.setsround(mc.sround+1);mc.sendDo('+S')">+S</a></li>
+                <li><a ng-click="mc.setsround(mc.sround-1);mc.sendDo('-S')">上一阶段</a></li>
+                <li><a ng-click="mc.setStage(mc.stage-1);mc.sendDo('-P')">上一步</a></li>
+                <li><a ng-click="mc.time=mc.inc(mc.time);mc.sendDo('+')">+1s</a></li>
+                <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton();mc.sendDo('P')">开始 / 暂停</a></li>
+                <li><a ng-click="mc.stopTiming(true);mc.sendDo('R')">重置</a></li>
+                <li><a ng-click="mc.setStage(mc.stage+1);mc.sendDo('+P')">下一步</a></li>
+                <li><a ng-click="mc.setsround(mc.sround+1);mc.sendDo('+S')">下一阶段</a></li>
             </ul>
         </div>
     </footer>

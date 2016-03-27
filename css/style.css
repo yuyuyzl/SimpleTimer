@@ -90,6 +90,9 @@
 		color: #8e8e8e;
 	}
 }
+.redTimer{
+	color: #5d2b25;
+}
 @media (min-width: 991px) {
 
 	.allCenter{

@@ -167,7 +167,31 @@
             }
             return ans;
         };
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
 
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        }
+        this.shuffleGroups=function() {
+            if (this.groups.length==4 && this.groups[3] == "") {
+                this.groups=this.groups.splice(0,3);
+            }
+            shuffle(this.groups);
+
+        }
         this.setStage=function(n){
             if (n<0) {
                 if (a.sround > 1) {
