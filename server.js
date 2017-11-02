@@ -1,5 +1,6 @@
 var http = require("http").createServer(function (req, res) {
     var pathname=__dirname+url.parse(req.url).pathname;
+    if(url.parse(req.url).pathname=="/a"||url.parse(req.url).pathname=="/a/")pathname=__dirname+"/app.html";
     if (path.extname(pathname)=="") {
         pathname+="/";
     }
@@ -7,6 +8,7 @@ var http = require("http").createServer(function (req, res) {
         pathname+="index.html";
     }
 
+    //console.log(url.parse(req.url).pathname);
     fs.exists(pathname,function(exists){
         if(exists){
             switch(path.extname(pathname)){
@@ -52,6 +54,7 @@ var http = require("http").createServer(function (req, res) {
 
 
 var roomdata={};
+var roompasswd={};
 var roomuser={};
 var roomdatatimer={};
 var io  =require("socket.io")(http);
@@ -93,7 +96,9 @@ io.on('connection',function(socket){
 
         }
     });
-    socket.on('joinRoom',function(id){
+    socket.on('joinRoom',function(dt){
+        var id=dt.id;
+        var passwd=dt.passwd;
         if (roomid!=null){
             socket.leave(roomid);
             roomuser[roomid]--;
@@ -114,6 +119,14 @@ io.on('connection',function(socket){
         //console.log(roomid+','+roomuser[roomid]);
         if(roomdatatimer[roomid])clearTimeout(roomdatatimer[roomid]);
         if (roomdata!=null)socket.emit('dataSync',{'data':roomdata[roomid]});
+        log("get password "+passwd);
+        if(roomuser[roomid]==1)roompasswd[roomid]=passwd;
+        else {
+            if(passwd!=roompasswd[roomid]){
+                log("inflict passwd with "+roompasswd[roomid]);
+                socket.emit('wrpass');
+            }
+        }
     });
     socket.on('pushData',function(data){
         if(roomdata[roomid]!=data['data']) {
@@ -129,7 +142,7 @@ io.on('connection',function(socket){
     socket.on('do',function(data){
         log('doing '+data);
         io.to(roomid).emit('do',data);
-    })
+    });
 
 });
 

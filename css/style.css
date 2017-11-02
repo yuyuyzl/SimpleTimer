@@ -1,4 +1,10 @@
 @charset "utf-8";
+@font-face {
+	font-family: "Webdings";
+	src: url('/font/webdings.ttf') format("truetype");
+}
+
+
 
 .selectedCell{
 	background-color: rgba(66, 116, 202, 0.84);
@@ -91,7 +97,10 @@
 	}
 }
 .redTimer{
-	color: #5d2b25;
+	color: #641516;
+}
+.outTimer{
+	color: #ff0000;
 }
 @media (min-width: 991px) {
 
@@ -136,7 +145,6 @@ body {
 	background-color: #f5f5f5;
 }
 
-
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
@@ -148,7 +156,27 @@ body {
 	padding-left: 15px;
 }
 
+@media (min-width: 991px) {
 
+	.footerMin{
+		visibility: hidden;
+		height: 0px;
+	}
+	.footerFull{
+		visibility: visible;
+	}
+}
+
+@media (max-width: 991px) {
+
+	.footerMin{
+		visibility: visible;
+	}
+	.footerFull{
+		visibility: hidden;
+		height: 0px;
+	}
+}
 
 .navbar-nav1 {
 	width: 100%;

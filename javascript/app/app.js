@@ -17,22 +17,37 @@
                     'roomid':this.roomid
                 };
 
+
             return window.btoa(unescape(encodeURIComponent(JSON.stringify(data))));
         };
+        this.passwd=null;
         this.decodeData=function(b64string,config){
             var data=JSON.parse(decodeURIComponent(escape(window.atob(b64string))));
-            if(!config||config.indexOf('stages')!=-1)this.stages=data['stages'];
-            if(!config||config.indexOf('groups')!=-1)this.groups=data['groups'];
-            if(!config||config.indexOf('sround')!=-1)this.setsround(data['sround']);
-            if(!config||config.indexOf('stage')!=-1)this.setStage(data['stage']);
-            if(!config||config.indexOf('time')!=-1)this.time=data['time'];
-            if (this.roomid==null){
+            if (this.roomid==null&&data.propertyIsEnumerable('roomid')){
                 this.roomid=data['roomid'];
-                this.joinRoom()
+                if(data.propertyIsEnumerable('passwd')){
+                    this.passwd=data['passwd'];
+                }
+                if(data.propertyIsEnumerable('RO')){
+                    this.showOnly=data['RO'];
+                    if(this.showOnly)this.passwd=null;
+                }
+                this.joinRoom();
+                this.pullData();
+
+            }else {
+                if (!config || config.indexOf('stages') != -1) this.stages = data['stages'];
+                if (!config || config.indexOf('groups') != -1) this.groups = data['groups'];
+                if (!config || config.indexOf('sround') != -1) this.setsround(data['sround']);
+                if (!config || config.indexOf('stage') != -1) this.setStage(data['stage']);
+                if (!config || config.indexOf('time') != -1) this.time = data['time'];
             }
         };
         this.hidemouse=false;
         this.onMoveTimer=null;
+        this.canInput=true;
+        this.canCtrl=true;
+        this.showOnly=false;
         //*******socket.io part*************
         this.socket=io();
         this.id=null;
@@ -51,6 +66,10 @@
                     a.decodeData(data['data'],data['config'])
                 }, 0);
             }else ignoreNextSync=false;
+        });
+        this.socket.on("wrpass",function (){
+            if(a.passwd!=null)alert("无效的密码，将转入仅显示模式");
+            a.showOnly=true;
         });
         this.socket.on('do',function(data){
             if (!ignoreNextDo){
@@ -103,7 +122,7 @@
         };
         this.joinRoom=function(){
             if (this.roomid!=null){
-                this.socket.emit("joinRoom",this.roomid);
+                this.socket.emit("joinRoom",{id:this.roomid,passwd:this.passwd});
             }
         };
         this.pushData=function(config){
@@ -129,8 +148,8 @@
         this.sround=1;
         this.timing=false;
         this.formatTime=function(n){
-            var mm=Math.floor(n/60);
-            var ss=n % 60;
+            var mm=Math.abs(Math.floor(n/60))-(n<0);
+            var ss=Math.abs(n % 60);
             return (mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;
         };
         this.url=window.location.href.split('?')[0];
@@ -186,11 +205,12 @@
             return array;
         }
         this.shuffleGroups=function() {
-            if (this.groups.length==4 && this.groups[3] == "") {
-                this.groups=this.groups.splice(0,3);
+            if (this.canInput) {
+                if (this.groups.length == 4 && this.groups[3] == "") {
+                    this.groups = this.groups.splice(0, 3);
+                }
+                shuffle(this.groups);
             }
-            shuffle(this.groups);
-
         }
         this.setStage=function(n){
             if (n<0) {
@@ -202,7 +222,7 @@
                 return;
             }
             if (n>=a.stages.length) {
-                if (a.sround < 3) {
+                if (a.sround < a.groups.length) {
                     a.sround++;
                     a.stage=0;
                     a.stopTiming(true);
@@ -213,14 +233,11 @@
             a.stopTiming(true);
         };
         this.setsround=function(n){
-            if(n<=0||n>=4)return;
+            if(n<=0||n> a.groups.length)return;
             a.sround=n;
             a.stopTiming(true);
         };
-        this.haha=function(a){
-            //Todo play something
 
-        };
         this.autoNext=function(){
             if (a.time==0) a.setStage(a.stage+1);
             else a.playButton();
@@ -230,20 +247,21 @@
             if (a.timing)
                 a.stopTiming(false);
             else
-                a.startTiming(a.haha);
+                a.startTiming();
+
         };
-        this.startTiming=function(cb){
+        this.startTiming=function(){
+            document.getElementById("sndend").play();
             var a=this;
             this.timing=true;
             this.time++;
             var timers=function(){
                 a.time--;
+                if (a.time==30)document.getElementById("sndmid").play();
+                if (a.time==0)document.getElementById("sndend").play();
                 console.log(a.time);
                 a.timerPromise=$timeout(function(){
-                    if (a.time>0) timers();else {
-                        a.timing=false;
-                        cb(a);
-                    }
+                    timers();
                 },1000);
             };
             timers();
@@ -258,18 +276,27 @@
             else n=Number(n)+1;
             return n;
         };
+
+        //main
         try {
+            this.stages=[['new activity',60]];
+            this.groups=['组1','组2','组3'];
+            this.setStage(0);
             this.decodeData(this.data);
         }catch (e){
-            this.stages=[['new activity',1]];
+            this.stages=[['new activity',60]];
             this.groups=['组1','组2','组3'];
             this.setStage(0);
         }
-        if (this.stages.length==0)this.stages=[['new activity',1]];
+        if (this.stages.length==0)this.stages=[['new activity',60]];
         var dataSyncTimer=null;
 
         $scope.$watch('mc.groups',function(newV,oldV){
             if ((newV!==oldV)){
+                if (a.groups.length == 4 && a.groups[3] == "") {
+                    a.groups = a.groups.splice(0, 3);
+
+                }
                 if (dataSyncTimer)$timeout.cancel(dataSyncTimer);
                 dataSyncTimer=$timeout(function(){
 

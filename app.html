@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="main" style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Timer</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <script src="javascript/socket.io.js"></script>
+    <script src="javascript/angular.min.js"></script>
+    <script src="javascript/app/app.js"></script>
+    <script src="javascript/jquery.min.js"></script>
+    <script src="javascript/bootstrap.min.js"></script>
+
+</head>
+
+<body ng-controller="mainCtrl as mc" role="document" style="cursor:default; height: 100%;background-image: url('img/bgp.png');background-position: 0px 50px;background-repeat: no-repeat;background-size: 100%" class="unselectable">
+    <nav class="nav navbar-default navbar-fixed-top navadd unselectable"  ng-show="!mc.showOnly">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li ng-class="{'active':mc.page==0}"><a ng-click="mc.page=0">计时</a></li>
+                    <li ng-class="{'active':mc.page==1}"><a ng-click="mc.page=1">配置</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div class="container" role="main" style="height: 100%">
+        <div ng-class="{'allCenter':mc.page==0}" style="padding-top: 60px;padding-bottom: 60px">
+            <!-- Page main-->
+            <div ng-show="mc.page==0" class="allCenter" ng-class="{'hideMouse':mc.hidemouse}" ng-mouseover="mc.onMoveOnMain()">
+                <main align="center" class="col-md-8 allCenter">
+                    <div>
+                        <h1 class="timerText" ng-bind="mc.stages[mc.stage][0]"></h1>
+                        <p class="timerMain" ng-class="{'redTimer':(mc.time>0 && mc.time<=30),'outTimer':(mc.time<=0)}" ng-bind="mc.formatTime(mc.time)"></p>
+                    </div>
+                </main>
+                <main class="col-md-4 allCenter" style="padding-left: 50px;padding-right: 50px">
+                    <div>
+                        <h2 class="roundText">第 <span ng-bind="mc.sround"></span> 阶段</h2>
+                        <br>
+                        <h2 class="groupName">正方：<span ng-bind="mc.groups[(mc.sround-1)%mc.groups.length]"></span></h2>
+                        <h2 class="groupName">反方：<span ng-bind="mc.groups[mc.sround % mc.groups.length]"></span></h2>
+
+                    </div>
+                </main>
+            </div>
+
+            <!-- Page settings-->
+            <main ng-show="mc.page==1">
+                <table class="table">
+                    <thead><th>显示文字</th><th>时间（s）</th><th ng-show="mc.canInput"/><th ng-show="mc.canInput"/><th ng-show="mc.canInput"/><th ng-show="mc.canInput"/></thead>
+                    <tbody>
+                        <tr ng-repeat="i in mc.getRangeArray(mc.stages.length)">
+                            <td><input ng-readonly="!mc.canInput" ng-model="mc.stages[i][0]" style="width: 30vw"></td>
+                            <td><input ng-readonly="!mc.canInput" ng-model="mc.stages[i][1]" style="width: 3vw"></td>
+                            <td ng-show="mc.canInput"><a ng-click="mc.upStageAt(i)" ng-show="i>0">[-Up-]</a></td>
+                            <td ng-show="mc.canInput"><a ng-click="mc.upStageAt(i+1)" ng-show="i<mc.stages.length-1">[-Down-]</a></td>
+                            <td ng-show="mc.canInput"><a ng-click="mc.rmvStageAt(i)">[-Delete-]</a></td>
+                            <td ng-show="mc.canInput"><a ng-click="mc.addStageAt(i)">[-Add-]</a></td>
+                        </tr>
+                        <tr><td>&nbsp;</td><td/><td ng-show="mc.canInput"/><td ng-show="mc.canInput"/><td ng-show="mc.canInput"/><td ng-show="mc.canInput"><a ng-click="mc.stages.push(['new activity',1])">[-Add-]</a></td></tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <table class="table">
+                        <thead><th>编号</th><th>组名</th><th></th></thead>
+                        <tbody>
+                        <tr><td>组1</td><td><input ng-readonly="!mc.canInput" ng-model="mc.groups[0]" style="width: 70%"></td><td></td></tr>
+                        <tr><td>组2</td><td><input ng-readonly="!mc.canInput" ng-model="mc.groups[1]" style="width: 70%"></td><td></td></tr>
+                        <tr><td>组3</td><td><input ng-readonly="!mc.canInput" ng-model="mc.groups[2]" style="width: 70%"></td><td></td></tr>
+                        <tr><td>组4</td><td><input ng-readonly="!mc.canInput" ng-model="mc.groups[3]" style="width: 70%"></td><td><button ng-click="mc.shuffleGroups()">乱序</button></td></tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <button ng-click="mc.canInput=!mc.canInput" ng-bind="mc.canInput?'锁定输入':'解锁输入'"></button>
+                <button ng-click="mc.canCtrl=!mc.canCtrl" ng-bind="mc.canCtrl?'锁定控制':'解锁控制'"></button>
+                <br>
+                <button ng-click="mc.showOnly=true;mc.page=0">展示模式</button> 关闭时请刷新页面
+                <br>
+                <p>URL with data: <input ng-model="mc.url+'?'+mc.encodeData()" style="width: 50%"> <a ng-href="{{mc.url+'?'+mc.encodeData()}}">Link</a></p>
+                <br>
+                <p ng-show="mc.id!=null">Session ID: <span ng-bind="mc.id"></span><br>Room Number:<span ng-bind="mc.roomid"></span>
+                    <button ng-click="mc.joinRoom()">Enter</button>
+                    <button ng-click="mc.pushData()">Push</button>
+                    <button ng-click="mc.pullData()">Pull</button>
+                </p>
+            </main>
+        </div>
+    </div>
+    <footer class="footer footerMin navbar-default navadd" ng-show="!mc.showOnly">
+        <div class="container" align="center" ng-show="mc.canCtrl && !mc.showOnly">
+            <div>
+                <ul class="nav navbar-nav navbar-nav1" style="font-size: 18px">
+                    <li><a ng-click="mc.setsround(mc.sround-1);mc.sendDo('-S')"><span style="font-family: Webdings"></span></a></li>
+                    <li><a ng-click="mc.setStage(mc.stage-1);mc.sendDo('-P')"><span style="font-family: Webdings"></span></a></li>
+                    <li><a ng-click="mc.time=mc.inc(mc.time);mc.sendDo('+')">+</a></li>
+                    <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton();mc.sendDo('P')"><span style="font-family: Webdings"></span>/<span style="font-family: Webdings"></span></a></li>
+                    <li><a ng-click="mc.stopTiming(true);mc.sendDo('R')"><span style="font-family: Webdings"></span></a></li>
+                    <li><a ng-click="mc.setStage(mc.stage+1);mc.sendDo('+P')"><span style="font-family: Webdings"></span></a></li>
+                    <li><a ng-click="mc.setsround(mc.sround+1);mc.sendDo('+S')"><span style="font-family: Webdings"></span></a></li>
+                </ul>
+            </div>
+
+        </div>
+    </footer>
+    <footer class="footer footerFull navbar-default navadd" ng-show="!mc.showOnly">
+        <div class="container" align="center" ng-show="mc.canCtrl && !mc.showOnly">
+
+            <div>
+                <ul class="nav navbar-nav navbar-nav1">
+                    <li><a ng-click="mc.setsround(mc.sround-1);mc.sendDo('-S')">上一阶段</a></li>
+                    <li><a ng-click="mc.setStage(mc.stage-1);mc.sendDo('-P')">上一步</a></li>
+                    <li><a ng-click="mc.time=mc.inc(mc.time);mc.sendDo('+')">+1s</a></li>
+                    <li ng-class="{'active':mc.timing}"><a ng-click="mc.playButton();mc.sendDo('P')">开始 / 暂停</a></li>
+                    <li><a ng-click="mc.stopTiming(true);mc.sendDo('R')">重置</a></li>
+                    <li><a ng-click="mc.setStage(mc.stage+1);mc.sendDo('+P')">下一步</a></li>
+                    <li><a ng-click="mc.setsround(mc.sround+1);mc.sendDo('+S')">下一阶段</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+    <audio src="sound/end.wav" id="sndend"></audio>
+    <audio src="sound/mid.wav" id="sndmid"></audio>
+</body>
+</html>
